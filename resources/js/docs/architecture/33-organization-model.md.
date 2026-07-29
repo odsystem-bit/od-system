@@ -1,0 +1,196 @@
+# Tracy Organization Model
+
+## Objectif
+
+Une entreprise n'utilise pas une seule IA.
+
+Elle construit une organisation composée d'employés IA.
+
+Chaque employé possède :
+
+- un rôle
+- un responsable
+- des collaborateurs
+- des objectifs
+- un niveau d'autonomie
+
+L'organisation IA reflète l'organisation réelle de l'entreprise.
+
+---
+
+# Structure
+
+Entreprise
+
+↓
+
+Départements
+
+↓
+
+Equipes
+
+↓
+
+Employés IA
+
+↓
+
+Missions
+
+---
+
+# Exemple
+
+Entreprise
+
+├── Direction
+
+├── Commercial
+
+├── Marketing
+
+├── Support
+
+├── Comptabilité
+
+├── RH
+
+└── Technique
+
+Chaque département peut posséder plusieurs employés IA.
+
+---
+
+# Manager IA
+
+Chaque équipe possède un Manager IA.
+
+Le Manager :
+
+- distribue les missions
+- vérifie leur exécution
+- détecte les blocages
+- réaffecte le travail
+- remonte les alertes
+
+Il ne réalise pas lui-même les tâches opérationnelles.
+
+---
+
+# Directeur IA
+
+Le Directeur IA supervise tous les Managers IA.
+
+Responsabilités :
+
+- arbitrer les priorités
+- suivre les KPI
+- coordonner les départements
+- informer le dirigeant humain
+- proposer des stratégies
+
+---
+
+# PDG Humain
+
+Le dirigeant garde toujours le contrôle.
+
+Il peut :
+
+- modifier les objectifs
+- changer les rôles
+- ajuster les permissions
+- arrêter une mission
+- désactiver un employé IA
+
+---
+
+# Collaboration
+
+Les employés IA collaborent entre eux.
+
+Exemple :
+
+Commercial IA
+
+↓
+
+Support IA
+
+↓
+
+Comptable IA
+
+↓
+
+Marketing IA
+
+Chaque collaboration est enregistrée.
+
+---
+
+# Escalade
+
+Si un employé ne peut pas terminer une mission :
+
+↓
+
+Manager IA
+
+↓
+
+Directeur IA
+
+↓
+
+Humain
+
+---
+
+# Communication
+
+Les échanges entre employés IA utilisent :
+
+- Events
+- Missions
+- Messages internes
+
+Jamais des appels directs.
+
+---
+
+# Charge de travail
+
+Chaque employé IA possède :
+
+- une file de missions
+- une priorité
+- une capacité maximale
+- un temps estimé
+
+Le Manager équilibre automatiquement la charge.
+
+---
+
+# Disponibilité
+
+Un employé IA peut être :
+
+- Disponible
+- Occupé
+- En attente
+- Suspendu
+- Hors service
+
+---
+
+# Audit
+
+Toutes les décisions organisationnelles sont historisées.
+
+---
+
+# Objectif final
+
+Créer une véritable organisation numérique où plusieurs employés IA collaborent efficacement sous la supervision du dirigeant humain.

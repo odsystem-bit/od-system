@@ -1,0 +1,11 @@
+<script setup>
+import { Head } from '@inertiajs/vue3';
+</script>
+
+<template>
+    <Head title="MANTOTA" />
+    <div class="min-h-screen bg-gray-900 text-white p-8">
+        <h1 class="text-4xl font-bold text-center">MANTOTA</h1>
+        <p class="text-center mt-4">Reseau publicitaire 100% Performance</p>
+    </div>
+</template>

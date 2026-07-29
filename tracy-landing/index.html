@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracy  Agent Commercial WhatsApp | OD Système</title>
+  <meta name="description" content="Crée ta boutique gratuite et vends automatiquement 24h/24 avec Tracy, votre agent commercial intelligent sur WhatsApp.">
+  <meta property="og:title" content="Tracy — Agent Commercial WhatsApp">
+  <meta property="og:description" content="Crée ta boutique gratuite et vends automatiquement 24h/24">
+  <meta property="og:image" content="https://i.ibb.co/nqFxs3VM/file-0000000024c481f4a233a5f714bbca1b.png">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --teal: #00D4C8;
+      --violet: #7B6CF6;
+      --dark: #060612;
+      --dark2: #0D0D1F;
+      --white: #FFFFFF;
+      --glass: rgba(255,255,255,0.04);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--dark);
+      color: var(--white);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    #loading-text {
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0;
+      transition: letter-spacing 0.4s ease;
+    }
+
+    #loading-text.flash {
+      animation: flash-light 0.3s ease;
+    }
+
+    @keyframes flash-light {
+      0% { text-shadow: none; }
+      50% { text-shadow: 0 0 50px var(--teal), 0 0 100px var(--teal); }
+      100% { text-shadow: none; }
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Cursor personnalisé */
+    #cursor {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--teal);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: width 0.2s ease, height 0.2s ease;
+      transform: translate(-50%, -50%);
+    }
+
+    #cursor.hovered {
+      width: 10px;
+      height: 10px;
+      background: var(--teal);
+    }
+
+    @media (max-width: 768px) {
+      #cursor { display: none; }
+      body { cursor: auto; }
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8vw;
+      z-index: 1000;
+      background: transparent;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease;
+    }
+
+    .navbar.scrolled {
+      background: rgba(6, 6, 18, 0.9);
+      backdrop-filter: blur(20px);
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(0, 212, 200, 0.3);
+    }
+
+    .navbar-brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .navbar-sub {
+      font-size: 11px;
+      opacity: 0.4;
+      margin-left: 4px;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-link {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 14px;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-link:hover {
+      opacity: 1;
+    }
+
+    .nav-cta {
+      background: none;
+      border: 1px solid rgba(0, 212, 200, 0.5);
+      color: var(--teal);
+      padding: 10px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      border-color: var(--teal);
+      background: rgba(0, 212, 200, 0.1);
+    }
+
+    .burger-menu {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .burger-line {
+      width: 25px;
+      height: 2px;
+      background: var(--white);
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-right { display: none; }
+      .burger-menu { display: flex; }
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      position: fixed;
+      top: 70px;
+      left: 0;
+      width: 100%;
+      background: rgba(6, 6, 18, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 30px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 999;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 18px;
+      padding: 10px 0;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://i.ibb.co/nqFxs3VM/file-0000000024c481f4a233a5f714bbca1b.png') center center/cover no-repeat;
+      background-position: center center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(6,6,18,0.97) 0%, rgba(6,6,18,0.85) 40%, rgba(6,6,18,0.3) 70%, rgba(6,6,18,0.1) 100%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(rgba(0, 212, 200, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 212, 200, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-content {
+      display: flex;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-left {
+      flex: 1;
+      padding-left: 8vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 70px;
+    }
+
+    .hero-right {
+      flex: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(0, 212, 200, 0.3);
+      border-radius: 4px;
+      padding: 6px 14px;
+      margin-bottom: 40px;
+      width: fit-content;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-badge-text {
+      font-size: 12px;
+      color: var(--teal);
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 6vw, 88px);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 24px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #00D4C8, #7B6CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      opacity: 0.6;
+      max-width: 440px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .hero-btn-primary {
+      background: var(--teal);
+      color: var(--dark);
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .hero-btn-primary:hover {
+      background: #00bfb4;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 200, 0.3);
+    }
+
+    .hero-btn-secondary {
+      background: transparent;
+      color: var(--white);
+      opacity: 0.7;
+      border: none;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .hero-btn-secondary:hover {
+      opacity: 1;
+      color: var(--teal);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 48px;
+      font-size: 13px;
+      opacity: 0.5;
+    }
+
+    .hero-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-stat-value {
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .hero-stat-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .hero { flex-direction: column; }
+      .hero-bg { background-position: center top; }
+      .hero-left { padding: 120px 20px 60px; text-align: center; }
+      .hero-right { display: none; }
+      .hero-buttons { flex-direction: column; }
+      .hero-stats { flex-direction: column; gap: 16px; align-items: center; }
+      .hero-stat-divider { display: none; }
+    }
+
+    /* Section Styles */
+    section {
+      position: relative;
+    }
+
+    .section-label {
+      color: var(--teal);
+      font-size: 12px;
+      letter-spacing: 3px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 700;
+      max-width: 600px;
+      line-height: 1.2;
+      margin-bottom: 80px;
+    }
+
+    /* Features Section */
+    .features {
+      background: var(--dark2);
+      padding: 120px 8vw;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .feature {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 32px 20px 32px 0;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .feature.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-text {
+      font-size: 15px;
+      opacity: 0.55;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .feature { padding: 32px 0; }
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      background: var(--dark);
+      padding: 120px 8vw;
+    }
+
+    .steps-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      max-width: 1000px;
+    }
+
+    .steps-line {
+      position: absolute;
+      top: 40px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: var(--teal);
+      opacity: 0.2;
+    }
+
+    .step {
+      flex: 1;
+      padding: 0 20px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .step.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-number {
+      font-size: 80px;
+      font-weight: 700;
+      opacity: 0.06;
+      position: absolute;
+      top: -20px;
+      left: 0;
+    }
+
+    .step-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-text {
+      font-size: 15px;
+      opacity: 0.55;
+    }
+
+    @media (max-width: 768px) {
+      .steps-container { flex-direction: column; gap: 60px; }
+      .steps-line { display: none; }
+    }
+
+    /* Pricing Section */
+    .pricing {
+      background: var(--dark2);
+      padding: 120px 8vw;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .pricing-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 40px 32px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .pricing-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pricing-card.popular {
+      border: 1px solid rgba(0, 212, 200, 0.4);
+      background: rgba(0, 212, 200, 0.04);
+    }
+
+    .pricing-badge {
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--teal);
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .pricing-badge.popular {
+      background: var(--teal);
+      color: var(--dark);
+      padding: 4px 12px;
+      border-radius: 4px;
+    }
+
+    .pricing-name {
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--teal);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .pricing-price {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .pricing-unit {
+      font-size: 16px;
+      opacity: 0.4;
+      margin-bottom: 24px;
+    }
+
+    .pricing-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .pricing-features li {
+      padding: 8px 0;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    .pricing-features li:before {
+      content: '✓ ';
+      color: var(--teal);
+    }
+
+    .pricing-features li.no {
+      opacity: 0.3;
+    }
+
+    .pricing-features li.no:before {
+      content: '✗ ';
+      color: inherit;
+    }
+
+    .pricing-btn {
+      display: block;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .pricing-btn.border {
+      background: transparent;
+      border: 1px solid var(--teal);
+      color: var(--teal);
+    }
+
+    .pricing-btn.border:hover {
+      background: rgba(0, 212, 200, 0.1);
+    }
+
+    .pricing-btn.gradient {
+      background: var(--teal);
+      color: var(--dark);
+      border: none;
+    }
+
+    .pricing-btn.gradient:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 200, 0.3);
+    }
+
+    .pricing-btn.violet {
+      background: transparent;
+      border: 1px solid var(--violet);
+      color: var(--violet);
+    }
+
+    .pricing-btn.violet:hover {
+      background: rgba(123, 108, 246, 0.1);
+    }
+
+    @media (max-width: 1024px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+    }
+
+    /* CTA Section */
+    .cta {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+      padding: 160px 8vw;
+      text-align: center;
+    }
+
+    .cta-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 40px;
+      box-shadow: 0 0 40px rgba(0, 212, 200, 0.3);
+    }
+
+    .cta-title {
+      font-size: 56px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .cta-subtitle {
+      font-size: 18px;
+      opacity: 0.5;
+      max-width: 400px;
+      margin: 0 auto 40px;
+    }
+
+    .cta-btn {
+      background: var(--teal);
+      color: var(--dark);
+      font-weight: 700;
+      padding: 16px 40px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s ease;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 212, 200, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .cta-title { font-size: 36px; }
+      .cta-avatar { width: 80px; height: 80px; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 40px 8vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .footer-sub {
+      font-size: 11px;
+      opacity: 0.4;
+    }
+
+    .footer-center {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-link {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 14px;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .footer-link:hover {
+      opacity: 1;
+    }
+
+    .footer-right {
+      font-size: 14px;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .footer { flex-direction: column; gap: 24px; text-align: center; }
+      .footer-center { flex-direction: column; gap: 16px; }
+    }
+
+    /* Scroll Animation */
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .scroll-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* WhatsApp SVG Icon */
+    .whatsapp-icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div id="loading-text">T</div>
+  </div>
+
+  <!-- Cursor -->
+  <div id="cursor"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="https://i.ibb.co/wHS8wtz/avata-logo-tracy.jpg" alt="Tracy" class="navbar-avatar">
+      <span class="navbar-brand">TRACY</span>
+      <span class="navbar-sub">by OD Système</span>
+    </div>
+    <div class="navbar-right">
+      <a href="#fonctionnalites" class="nav-link">Fonctionnalités</a>
+      <a href="#tarifs" class="nav-link">Tarifs</a>
+      <a href="https://wa.me/15553689958" class="nav-cta">Commencer</a>
+    </div>
+    <div class="burger-menu" onclick="toggleMenu()">
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+      <div class="burger-line"></div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#fonctionnalites" onclick="toggleMenu()">Fonctionnalités</a>
+    <a href="#tarifs" onclick="toggleMenu()">Tarifs</a>
+    <a href="https://wa.me/15553689958" onclick="toggleMenu()">Commencer</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          <span class="hero-badge-text">AGENT COMMERCIAL IA</span>
+        </div>
+        <h1 class="hero-title">
+          Vos clients méritent<br>
+          <span>une réponse immédiate.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Tracy gère vos conversations WhatsApp, crée votre boutique et convertit vos prospects en clients — 24h/24, sans interruption.
+        </p>
+        <div class="hero-buttons">
+          <a href="https://wa.me/15553689958" class="hero-btn-primary">
+            <svg class="whatsapp-icon" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Commencer gratuitement
+          </a>
+          <a href="#tarifs" class="hero-btn-secondary">Voir les tarifs →</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-value" data-count="24">0</span>
+            <span>/7 | Disponibilité</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value" data-count="0">0</span>
+            <span> FCFA | Pour démarrer</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value" data-count="5">0</span>
+            <span> min | Mise en place</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right"></div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="fonctionnalites">
+    <p class="section-label scroll-animate">CE QUE TRACY FAIT</p>
+    <h2 class="section-title scroll-animate">
+      Un seul agent.<br>Toutes les missions.
+    </h2>
+    <div class="features-grid">
+      <div class="feature" style="transition-delay: 0s;">
+        <div class="feature-icon">🛍</div>
+        <h3 class="feature-title">Boutique gratuite</h3>
+        <p class="feature-text">Crée et publie ta boutique Mantota en quelques messages. Aucune compétence requise.</p>
+      </div>
+      <div class="feature" style="transition-delay: 0.1s;">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Réponse instantanée</h3>
+        <p class="feature-text">Tes clients reçoivent une réponse en moins de 2 secondes, à toute heure.</p>
+      </div>
+      <div class="feature" style="transition-delay: 0.2s;">
+        <div class="feature-icon">🔍</div>
+        <h3 class="feature-title">Scan automatique</h3>
+        <p class="feature-text">Tracy analyse ton site existant et importe tous tes produits automatiquement.</p>
+      </div>
+      <div class="feature" style="transition-delay: 0.3s;">
+        <div class="feature-icon">💬</div>
+        <h3 class="feature-title">Conversations naturelles</h3>
+        <p class="feature-text">Tracy parle comme un humain. Tes clients ne savent pas que c'est un agent IA.</p>
+      </div>
+      <div class="feature" style="transition-delay: 0.4s;">
+        <div class="feature-icon">📈</div>
+        <h3 class="feature-title">Relance intelligente</h3>
+        <p class="feature-text">Les prospects qui n'ont pas acheté sont relancés automatiquement après 24h.</p>
+      </div>
+      <div class="feature" style="transition-delay: 0.5s;">
+        <div class="feature-icon">🔄</div>
+        <h3 class="feature-title">Gestion en temps réel</h3>
+        <p class="feature-text">Modifie tes produits et prix en écrivant juste un message à Tracy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <p class="section-label scroll-animate">COMMENT ÇA MARCHE</p>
+    <h2 class="section-title scroll-animate">
+      Simple comme bonjour
+    </h2>
+    <div class="steps-container">
+      <div class="steps-line"></div>
+      <div class="step scroll-animate" style="transition-delay: 0s;">
+        <span class="step-number">01</span>
+        <h3 class="step-title">Écris à Tracy</h3>
+        <p class="step-text">Envoie un message sur WhatsApp</p>
+      </div>
+      <div class="step scroll-animate" style="transition-delay: 0.2s;">
+        <span class="step-number">02</span>
+        <h3 class="step-title">Ta boutique est créée</h3>
+        <p class="step-text">Tracy configure tout automatiquement</p>
+      </div>
+      <div class="step scroll-animate" style="transition-delay: 0.4s;">
+        <span class="step-number">03</span>
+        <h3 class="step-title">Tu vends, Tracy gère</h3>
+        <p class="step-text">Tes clients sont accueillis 24h/24</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="tarifs">
+    <p class="section-label scroll-animate">TARIFS</p>
+    <h2 class="section-title scroll-animate">
+      Des tarifs pour tous
+    </h2>
+    <div class="pricing-grid">
+      <div class="pricing-card" style="transition-delay: 0s;">
+        <span class="pricing-name">GRATUIT</span>
+        <div class="pricing-price">0 FCFA</div>
+        <p class="pricing-unit">Pour démarrer</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>50 conversations/mois</li>
+          <li>Boutique Mantota</li>
+          <li>Agent de base</li>
+          <li class="no">Relance auto</li>
+          <li class="no">Statistiques</li>
+        </ul>
+        <a href="https://wa.me/15553689958" class="pricing-btn border">Commencer</a>
+      </div>
+      <div class="pricing-card" style="transition-delay: 0.1s;">
+        <span class="pricing-name">STARTER</span>
+        <div class="pricing-price">2 500 FCFA</div>
+        <p class="pricing-unit">/mois</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>500 conversations/mois</li>
+          <li>Boutique Mantota</li>
+          <li>Agent intelligent</li>
+          <li>Relance auto</li>
+          <li class="no">Statistiques</li>
+        </ul>
+        <a href="https://wa.me/15553689958" class="pricing-btn border">Choisir</a>
+      </div>
+      <div class="pricing-card popular" style="transition-delay: 0.2s;">
+        <span class="pricing-badge popular">POPULAIRE</span>
+        <span class="pricing-name">STANDARD</span>
+        <div class="pricing-price">6 000 FCFA</div>
+        <p class="pricing-unit">/mois</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>2 000 conversations/mois</li>
+          <li>Boutique Mantota</li>
+          <li>Agent intelligent</li>
+          <li>Relance auto</li>
+          <li>Statistiques mensuelles</li>
+        </ul>
+        <a href="https://wa.me/15553689958" class="pricing-btn gradient">Choisir</a>
+      </div>
+      <div class="pricing-card" style="transition-delay: 0.3s;">
+        <span class="pricing-name">PRO</span>
+        <div class="pricing-price">12 000 FCFA</div>
+        <p class="pricing-unit">/mois</p>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Illimité</li>
+          <li>Tout Standard +</li>
+          <li>Numéro WhatsApp personnel dédié</li>
+          <li>Support prioritaire</li>
+          <li>Stats avancées</li>
+          <li>Scan auto hebdomadaire</li>
+        </ul>
+        <a href="https://wa.me/15553689958" class="pricing-btn violet">Choisir</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <img src="https://i.ibb.co/wHS8wtz/avata-logo-tracy.jpg" alt="Tracy" class="cta-avatar">
+    <h2 class="cta-title scroll-animate">
+      Prêt à vendre plus,<br>sans effort ?
+    </h2>
+    <p class="cta-subtitle scroll-animate">
+      Écrivez à Tracy sur WhatsApp et commencez à vendre automatiquement dès maintenant.
+    </p>
+    <a href="https://wa.me/15553689958" class="cta-btn scroll-animate">Écrire à Tracy sur WhatsApp</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      <span class="footer-logo">TRACY</span>
+      <span class="footer-sub">by OD Système</span>
+    </div>
+    <div class="footer-center">
+      <a href="#fonctionnalites" class="footer-link">Fonctionnalités</a>
+      <a href="#tarifs" class="footer-link">Tarifs</a>
+      <a href="https://wa.me/15553689958" class="footer-link">Contact</a>
+    </div>
+    <div class="footer-right">
+      © 2026 OD Système. Tous droits réservés.
+    </div>
+  </footer>
+
+  <script>
+    // Loading Screen - Letter by letter animation
+    const loadingText = document.getElementById('loading-text');
+    const loadingScreen = document.getElementById('loading-screen');
+    const targetText = 'TRACY';
+    let currentIndex = 0;
+
+    function typeLetter() {
+      if (currentIndex < targetText.length) {
+        loadingText.textContent = targetText.substring(0, currentIndex + 1);
+        currentIndex++;
+        setTimeout(typeLetter, 150);
+      } else {
+        // Stretch animation
+        loadingText.style.letterSpacing = '20px';
+        setTimeout(() => {
+          loadingText.classList.add('flash');
+          setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+          }, 400);
+        }, 300);
+      }
+    }
+
+    window.addEventListener('load', () => {
+      setTimeout(typeLetter, 300);
+    });
+
+    // Cursor with lerp
+    const cursor = document.getElementById('cursor');
+    let cursorX = window.innerWidth / 2;
+    let cursorY = window.innerHeight / 2;
+    let targetX = cursorX;
+    let targetY = cursorY;
+
+    document.addEventListener('mousemove', (e) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+    });
+
+    function animateCursor() {
+      cursorX += (targetX - cursorX) * 0.15;
+      cursorY += (targetY - cursorY) * 0.15;
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    // Cursor hover effect
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+    });
+
+    // Navbar scroll effect
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('active');
+    }
+
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate, .feature, .step, .pricing-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Stats counter animation
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const stat = entry.target;
+          const target = parseInt(stat.dataset.count);
+          animateCounter(stat, target);
+          statsObserver.unobserve(stat);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.hero-stat-value').forEach(stat => {
+      statsObserver.observe(stat);
+    });
+
+    function animateCounter(element, target) {
+      let current = 0;
+      const increment = target / 30;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          element.textContent = target;
+          clearInterval(timer);
+        } else {
+          element.textContent = Math.floor(current);
+        }
+      }, 50);
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

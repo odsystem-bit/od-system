@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Tracy Admin' %></title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0A0A1A;
+      color: white;
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 240px;
+      background: #0D0D1F;
+      padding: 24px;
+      position: fixed;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      border-right: 1px solid #1a1a2e;
+    }
+    .sidebar-logo {
+      margin-bottom: 40px;
+    }
+    .sidebar-logo h1 {
+      font-size: 28px;
+      color: #00D4C8;
+      margin-bottom: 4px;
+    }
+    .sidebar-logo p {
+      font-size: 14px;
+      color: #888;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    .sidebar a:hover {
+      background: rgba(0, 212, 200, 0.1);
+    }
+    .sidebar a.active {
+      background: rgba(0, 212, 200, 0.15);
+      color: #00D4C8;
+    }
+    .main-content {
+      margin-left: 240px;
+      flex: 1;
+      padding: 32px;
+    }
+    .flash-message {
+      padding: 16px 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    .flash-success {
+      background: rgba(40, 167, 69, 0.2);
+      border: 1px solid #28a745;
+      color: #28a745;
+    }
+    .flash-error {
+      background: rgba(220, 53, 69, 0.2);
+      border: 1px solid #dc3545;
+      color: #dc3545;
+    }
+    .card {
+      background: #0D0D1F;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #1a1a2e;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #00D4C8;
+      color: #060612;
+    }
+    .btn-primary:hover {
+      background: #00b8ac;
+    }
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid #1a1a2e;
+    }
+    th {
+      background: #0D0D1F;
+      font-weight: 600;
+      color: #888;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    select, input {
+      padding: 10px 14px;
+      border: 1px solid #1a1a2e;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #0D0D1F;
+      color: white;
+    }
+    select:focus, input:focus {
+      outline: none;
+      border-color: #00D4C8;
+    }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-teal {
+      background: rgba(0, 212, 200, 0.2);
+      color: #00D4C8;
+    }
+    .badge-orange {
+      background: rgba(255, 159, 64, 0.2);
+      color: #ff9f40;
+    }
+    .badge-green {
+      background: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+    }
+    .badge-violet {
+      background: rgba(138, 43, 226, 0.2);
+      color: #8a2be2;
+    }
+    .badge-red {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+    h1, h2, h3 {
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Tracy</h1>
+      <p>Admin</p>
+    </div>
+    <a href="/" class="<%= typeof page !== 'undefined' && page === 'dashboard' ? 'active' : '' %>">🏠 Dashboard</a>
+    <a href="/clients" class="<%= typeof page !== 'undefined' && page === 'clients' ? 'active' : '' %>">👥 Clients</a>
+    <a href="/logs" class="<%= typeof page !== 'undefined' && page === 'logs' ? 'active' : '' %>">📋 Logs</a>
+    <a href="/plans" class="<%= typeof page !== 'undefined' && page === 'plans' ? 'active' : '' %>">💰 Plans & Tarifs</a>
+    <a href="/logout" style="margin-top: 40px;">🚪 Déconnexion</a>
+  </div>
+  <div class="main-content">
+    <% if (typeof flash !== 'undefined' && flash) { %>
+      <div class="flash-message flash-<%= flash.type %>">
+        <%= flash.msg %>
+      </div>
+      <% delete flash; %>
+    <% } %>

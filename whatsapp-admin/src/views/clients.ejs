@@ -1,0 +1,80 @@
+<%- include('partials/header', { page: 'clients', title: 'Clients' }) %>
+<h1>Clients</h1>
+
+<div class="card" style="margin-bottom: 20px;">
+  <form method="GET" action="/clients" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <label style="color: #888;">Plan:</label>
+    <select name="plan">
+      <option value="">Tous</option>
+      <option value="gratuit" <%= filters.plan === 'gratuit' ? 'selected' : '' %>>Gratuit</option>
+      <option value="starter" <%= filters.plan === 'starter' ? 'selected' : '' %>>Starter</option>
+      <option value="standard" <%= filters.plan === 'standard' ? 'selected' : '' %>>Standard</option>
+      <option value="pro" <%= filters.plan === 'pro' ? 'selected' : '' %>>Pro</option>
+    </select>
+    <label style="color: #888;">Statut:</label>
+    <select name="status">
+      <option value="">Tous</option>
+      <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Actif</option>
+      <option value="suspended" <%= filters.status === 'suspended' ? 'selected' : '' %>>Suspendu</option>
+      <option value="inactive" <%= filters.status === 'inactive' ? 'selected' : '' %>>Inactif</option>
+    </select>
+    <label style="color: #888;">Recherche:</label>
+    <input type="text" name="search" placeholder="Nom boutique..." value="<%= filters.search || '' %>" style="width: 200px;">
+    <button type="submit" class="btn btn-primary">Filtrer</button>
+  </form>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Boutique</th>
+        <th>Téléphone</th>
+        <th>Plan</th>
+        <th>Statut</th>
+        <th>Conversations</th>
+        <th>Expiration</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% clients.forEach(client => { %>
+        <tr>
+          <td><%= client.shop_name || client.name || '-' %></td>
+          <td><%= client.phone_number ? '***' + client.phone_number.substring(client.phone_number.length - 4) : '-' %></td>
+          <td>
+            <% if (client.plan === 'gratuit') { %>
+              <span class="badge badge-teal">Gratuit</span>
+            <% } else if (client.plan === 'starter') { %>
+              <span class="badge badge-orange">Starter</span>
+            <% } else if (client.plan === 'standard') { %>
+              <span class="badge badge-green">Standard</span>
+            <% } else if (client.plan === 'pro') { %>
+              <span class="badge badge-violet">Pro</span>
+            <% } else { %>
+              <span class="badge badge-red">-</span>
+            <% } %>
+          </td>
+          <td>
+            <% if (client.bot_status === 'active') { %>
+              <span class="badge badge-green">✅ Actif</span>
+            <% } else if (client.bot_status === 'suspended') { %>
+              <span class="badge badge-orange">⏸ Suspendu</span>
+            <% } else { %>
+              <span class="badge badge-red">❌ Inactif</span>
+            <% } %>
+          </td>
+          <td><%= client.conversations_count || 0 %> / <%= client.conversations_included || '-' %></td>
+          <td><%= client.date_fin ? new Date(client.date_fin).toLocaleDateString('fr-FR') : '-' %></td>
+          <td>
+            <a href="/clients/<%= client.id %>" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Voir</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% if (clients.length === 0) { %>
+    <p style="text-align: center; padding: 40px; color: #888;">Aucun client trouvé</p>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,273 @@
+<script setup>
+import { ref, computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { useScrollReveal } from '../Composables/useScrollReveal.js';
+
+useScrollReveal();
+
+const page = usePage();
+const gs = computed(() => page.props.global_settings || {});
+const mobileMenuOpen = ref(false);
+
+const navLinks = [
+    { label: 'Comment ca marche', href: '/#comment-ca-marche', anchor: true },
+    { label: 'Tarifs', route: 'tarifs' },
+    { label: 'A propos', route: 'about' },
+    { label: 'Documentation', route: 'documentation' },
+];
+</script>
+
+<template>
+    <div class="min-h-screen bg-slate-950 text-white selection:bg-teal-500 selection:text-white">
+
+        <!-- ══════ NAVBAR ══════ -->
+        <nav class="fixed inset-x-0 top-0 z-50 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
+            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+                <a :href="route('home')" class="flex items-center gap-3">
+                    <img :src="gs.site_logo_light || '/images/logo-white.png'" alt="MANTOTA" class="h-9 w-auto object-contain" :style="{ maxWidth: (gs.logo_width || 140) + 'px', maxHeight: (gs.logo_height || 40) + 'px' }" />
+                </a>
+
+                <div class="hidden items-center gap-6 md:flex">
+                    <template v-for="link in navLinks" :key="link.label">
+                        <a v-if="link.anchor" :href="link.href" class="text-sm text-slate-400 transition-colors hover:text-white">{{ link.label }}</a>
+                        <a v-else :href="route(link.route)" class="text-sm text-slate-400 transition-colors hover:text-white">{{ link.label }}</a>
+                    </template>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a :href="route('vendor.login')" class="hidden rounded-lg px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white sm:inline-flex">Connexion</a>
+                    <a :href="route('vendor.register')" class="hidden rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 transition-all hover:shadow-teal-500/30 hover:brightness-110 sm:inline-flex">Commencer</a>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white md:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            <path v-else stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <Transition
+                enter-active-class="transition duration-200 ease-out"
+                enter-from-class="opacity-0 -translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition duration-150 ease-in"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-2"
+            >
+                <div v-if="mobileMenuOpen" class="border-t border-slate-800/60 bg-slate-950/95 backdrop-blur-xl md:hidden">
+                    <div class="space-y-1 px-4 py-4">
+                        <template v-for="link in navLinks" :key="link.label">
+                            <a v-if="link.anchor" :href="link.href" @click="mobileMenuOpen = false" class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white">{{ link.label }}</a>
+                            <a v-else :href="route(link.route)" class="block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white">{{ link.label }}</a>
+                        </template>
+                        <div class="mt-3 flex flex-col gap-2 border-t border-slate-800 pt-3">
+                            <a :href="route('vendor.login')" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white">Connexion Vendeur</a>
+                            <a :href="route('influencer.login')" class="rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white">Connexion Createur de Contenu</a>
+                            <a :href="route('vendor.register')" class="mt-1 block rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 px-3 py-2 text-center text-sm font-semibold text-white">Commencer</a>
+                        </div>
+                    </div>
+                </div>
+            </Transition>
+        </nav>
+
+        <!-- ══════ MAIN CONTENT ══════ -->
+        <main class="pt-16">
+            <slot />
+        </main>
+
+        <!-- ══════ FOOTER ══════ -->
+        <footer class="border-t border-slate-800/60 bg-slate-950">
+            <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+                <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+                    <!-- Brand -->
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <img :src="gs.site_logo_light || '/images/logo-white.png'" alt="MANTOTA" class="h-9 w-auto object-contain" :style="{ maxWidth: (gs.logo_width || 140) + 'px', maxHeight: (gs.logo_height || 40) + 'px' }" />
+                        </div>
+                        <p class="mt-4 text-sm leading-relaxed text-slate-500">Reseau publicitaire 100% performance.<br/>Vendeurs et createurs de contenu, ensemble.</p>
+                        <div v-if="gs.physical_address" class="mt-3 text-xs text-slate-600">{{ gs.physical_address }}</div>
+                        <div v-if="gs.rccm" class="mt-1 text-xs text-slate-600">RCCM : {{ gs.rccm }}</div>
+                        <div v-if="gs.ifu" class="text-xs text-slate-600">IFU : {{ gs.ifu }}</div>
+                    </div>
+
+                    <!-- Plateforme -->
+                    <div>
+                        <h4 class="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Plateforme</h4>
+                        <ul class="space-y-2.5">
+                            <li><a :href="route('tarifs')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Tarifs</a></li>
+                            <li><a :href="route('about')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">A propos</a></li>
+                            <li><a :href="route('documentation')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Documentation</a></li>
+                            <li><a :href="route('support.create')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Support</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Acces -->
+                    <div>
+                        <h4 class="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Acces</h4>
+                        <ul class="space-y-2.5">
+                            <li><a :href="route('vendor.login')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Espace Vendeur</a></li>
+                            <li><a :href="route('influencer.login')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Espace Createur de Contenu</a></li>
+                            <li><a :href="route('vendor.register')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Devenir Vendeur</a></li>
+                            <li><a :href="route('influencer.register')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Devenir Createur de Contenu</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal + Contact -->
+                    <div>
+                        <h4 class="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-400">Legal</h4>
+                        <ul class="space-y-2.5">
+                            <li><a :href="route('legal.terms')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">CGV</a></li>
+                            <li><a :href="route('legal.privacy')" class="text-sm text-slate-500 transition-colors hover:text-teal-400">Confidentialite</a></li>
+                        </ul>
+                        <div class="mt-5 space-y-2">
+                            <a v-if="gs.contact_email" :href="`mailto:${gs.contact_email}`" class="flex items-center gap-2 text-sm text-slate-500 hover:text-teal-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                                {{ gs.contact_email }}
+                            </a>
+                            <a v-if="gs.whatsapp_phone" :href="`https://wa.me/${gs.whatsapp_phone?.replace(/[^0-9+]/g, '')}`" target="_blank" class="flex items-center gap-2 text-sm text-slate-500 hover:text-teal-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                                {{ gs.whatsapp_phone }}
+                            </a>
+                        </div>
+                        <!-- Social icons -->
+                        <div class="mt-5 flex gap-3">
+                            <a v-if="gs.social_facebook" :href="gs.social_facebook" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/50 text-slate-500 transition-all hover:bg-teal-500/10 hover:text-teal-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+                            </a>
+                            <a v-if="gs.social_instagram" :href="gs.social_instagram" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/50 text-slate-500 transition-all hover:bg-teal-500/10 hover:text-teal-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg>
+                            </a>
+                            <a v-if="gs.social_tiktok" :href="gs.social_tiktok" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/50 text-slate-500 transition-all hover:bg-teal-500/10 hover:text-teal-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg>
+                            </a>
+                            <a v-if="gs.social_twitter" :href="gs.social_twitter" target="_blank" rel="noopener" class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800/50 text-slate-500 transition-all hover:bg-teal-500/10 hover:text-teal-400">
+                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 border-t border-slate-800/60 pt-6 text-center text-xs text-slate-600">
+                    &copy; {{ new Date().getFullYear() }} {{ gs.company_name || 'MANTOTA' }}. Tous droits reserves.
+                </div>
+            </div>
+        </footer>
+    </div>
+</template>
+
+<style>
+/* ══════ Scroll Reveal Animations ══════ */
+[data-reveal] {
+    opacity: 0;
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal].revealed {
+    opacity: 1;
+}
+[data-reveal="fade-up"] { transform: translateY(30px); }
+[data-reveal="fade-up"].revealed { transform: translateY(0); }
+[data-reveal="fade-left"] { transform: translateX(-30px); }
+[data-reveal="fade-left"].revealed { transform: translateX(0); }
+[data-reveal="fade-right"] { transform: translateX(30px); }
+[data-reveal="fade-right"].revealed { transform: translateX(0); }
+[data-reveal="zoom"] { transform: scale(0.92); }
+[data-reveal="zoom"].revealed { transform: scale(1); }
+[data-reveal="fade"] { transform: none; }
+[data-reveal="fade"].revealed { transform: none; }
+
+/* ══════ Hero Section Animations ══════ */
+.hero-section {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Floating gradient blobs */
+.hero-gradient-1 {
+    animation: hero-blob-1 18s ease-in-out infinite;
+}
+.hero-gradient-2 {
+    animation: hero-blob-2 22s ease-in-out infinite;
+}
+.hero-gradient-3 {
+    animation: hero-blob-3 20s ease-in-out infinite;
+}
+
+@keyframes hero-blob-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(60px, -40px) scale(1.08); }
+    66% { transform: translate(-30px, 30px) scale(0.95); }
+}
+@keyframes hero-blob-2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-50px, 50px) scale(1.12); }
+    66% { transform: translate(40px, -20px) scale(0.92); }
+}
+@keyframes hero-blob-3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, 30px) scale(1.05); }
+    66% { transform: translate(-60px, -40px) scale(0.98); }
+}
+
+/* Floating particles */
+.hero-particle {
+    animation: hero-particle-float 6s ease-in-out infinite;
+}
+@keyframes hero-particle-float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-30px) scale(1.5); opacity: 1; }
+}
+
+/* Floating dashboard card */
+.hero-float {
+    animation: hero-float 6s ease-in-out infinite;
+}
+@keyframes hero-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+/* Floating badges */
+.hero-float-badge {
+    animation: hero-badge-float 5s ease-in-out infinite;
+}
+.hero-float-badge-2 {
+    animation: hero-badge-float-2 7s ease-in-out infinite;
+}
+@keyframes hero-badge-float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(6px, -8px); }
+}
+@keyframes hero-badge-float-2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-6px, -10px); }
+}
+
+/* Chart line animation */
+.hero-chart-line {
+    stroke-dasharray: 500;
+    stroke-dashoffset: 500;
+    animation: hero-chart-draw 2.5s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+}
+.hero-chart-area {
+    opacity: 0;
+    animation: hero-chart-fade 1s ease 2.5s forwards;
+}
+@keyframes hero-chart-draw {
+    to { stroke-dashoffset: 0; }
+}
+@keyframes hero-chart-fade {
+    to { opacity: 1; }
+}
+
+/* Title gradient shimmer */
+.hero-title-gradient {
+    background-size: 200% 200%;
+    animation: hero-title-shimmer 5s ease-in-out infinite;
+}
+@keyframes hero-title-shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+</style>

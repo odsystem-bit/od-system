@@ -1,0 +1,51 @@
+<%- include('partials/header', { page: 'plans', title: 'Plans & Tarifs' }) %>
+<h1>Plans & Tarifs</h1>
+
+<div class="card">
+  <form method="POST" action="/plans/update">
+    <table>
+      <thead>
+        <tr>
+          <th>Plan</th>
+          <th>Prix (FCFA)</th>
+          <th>Conversations incluses</th>
+          <th>Surplus par 100 (FCFA)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% plans.forEach(plan => { %>
+          <tr>
+            <td>
+              <% if (plan.plan === 'gratuit') { %>
+                <span class="badge badge-teal"><%= plan.plan.toUpperCase() %></span>
+              <% } else if (plan.plan === 'starter') { %>
+                <span class="badge badge-orange"><%= plan.plan.toUpperCase() %></span>
+              <% } else if (plan.plan === 'standard') { %>
+                <span class="badge badge-green"><%= plan.plan.toUpperCase() %></span>
+              <% } else if (plan.plan === 'pro') { %>
+                <span class="badge badge-violet"><%= plan.plan.toUpperCase() %></span>
+              <% } %>
+            </td>
+            <td>
+              <input type="number" name="<%= plan.plan %>_prix" value="<%= plan.prix %>" style="width: 120px;">
+            </td>
+            <td>
+              <input type="number" name="<%= plan.plan %>_conversations" value="<%= plan.conversations %>" style="width: 120px;">
+            </td>
+            <td>
+              <input type="number" name="<%= plan.plan %>_surplus" value="<%= plan.surplus_per_100 %>" style="width: 120px;">
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Enregistrer les modifications</button>
+  </form>
+</div>
+
+<div class="card" style="background: rgba(255, 159, 64, 0.1); border: 1px solid #ff9f40;">
+  <h3 style="color: #ff9f40;">⚠️ Information importante</h3>
+  <p style="margin-top: 12px;">Les modifications de prix et de limites affecteront uniquement les nouveaux abonnements.</p>
+  <p>Les abonnements existants conserveront leur configuration actuelle jusqu'au renouvellement.</p>
+</div>
+<%- include('partials/footer') %>

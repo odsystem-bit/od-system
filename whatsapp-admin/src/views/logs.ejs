@@ -1,0 +1,113 @@
+<%- include('partials/header', { page: 'logs', title: 'Logs Système' }) %>
+<h1>Logs Système</h1>
+
+<div class="card" style="margin-bottom: 20px;">
+  <form method="GET" action="/logs" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <label style="color: #888;">Niveau:</label>
+    <select name="level">
+      <option value="">Tous</option>
+      <option value="info" <%= filters.level === 'info' ? 'selected' : '' %>>Info</option>
+      <option value="warning" <%= filters.level === 'warning' ? 'selected' : '' %>>Warning</option>
+      <option value="error" <%= filters.level === 'error' ? 'selected' : '' %>>Error</option>
+    </select>
+    <label style="color: #888;">Service:</label>
+    <select name="service">
+      <option value="">Tous</option>
+      <option value="webhook" <%= filters.service === 'webhook' ? 'selected' : '' %>>Webhook</option>
+      <option value="scanner" <%= filters.service === 'scanner' ? 'selected' : '' %>>Scanner</option>
+      <option value="billing" <%= filters.service === 'billing' ? 'selected' : '' %>>Billing</option>
+      <option value="cron" <%= filters.service === 'cron' ? 'selected' : '' %>>Cron</option>
+      <option value="mantota" <%= filters.service === 'mantota' ? 'selected' : '' %>>Mantota</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Filtrer</button>
+  </form>
+</div>
+
+<div class="card" style="margin-bottom: 20px;">
+  <button id="liveBtn" class="btn btn-primary">Voir en direct (5s)</button>
+  <form method="POST" action="/logs/clear-old" style="display: inline;">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Supprimer tous les logs de plus de 30 jours ?');">Effacer logs anciens (> 30 jours)</button>
+  </form>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Niveau</th>
+        <th>Service</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody id="logsTable">
+      <% logs.forEach(log => { %>
+        <tr style="color: <%= log.level === 'error' ? '#dc3545' : log.level === 'warning' ? '#ff9f40' : log.level === 'info' ? '#00D4C8' : '#888' %>;">
+          <td><%= new Date(log.created_at).toLocaleString('fr-FR') %></td>
+          <td>
+            <% if (log.level === 'error') { %>
+              <span class="badge badge-red">ERROR</span>
+            <% } else if (log.level === 'warning') { %>
+              <span class="badge badge-orange">WARN</span>
+            <% } else if (log.level === 'info') { %>
+              <span class="badge badge-teal">INFO</span>
+            <% } else { %>
+              <span class="badge badge-green"><%= log.level.toUpperCase() %></span>
+            <% } %>
+          </td>
+          <td><%= log.service %></td>
+          <td><%= log.message %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% if (logs.length === 0) { %>
+    <p style="text-align: center; padding: 40px; color: #888;">Aucun log trouvé</p>
+  <% } %>
+</div>
+
+<script>
+let liveInterval = null;
+const liveBtn = document.getElementById('liveBtn');
+
+liveBtn.addEventListener('click', () => {
+  if (liveInterval) {
+    clearInterval(liveInterval);
+    liveInterval = null;
+    liveBtn.textContent = 'Voir en direct (5s)';
+    liveBtn.classList.remove('btn-danger');
+    liveBtn.classList.add('btn-primary');
+  } else {
+    liveInterval = setInterval(async () => {
+      try {
+        const level = '<%= filters.level || "" %>';
+        const service = '<%= filters.service || "" %>';
+        const url = `/logs/api?level=${level}&service=${service}&limit=200`;
+        const response = await fetch(url);
+        const logs = await response.json();
+        const tbody = document.getElementById('logsTable');
+        
+        tbody.innerHTML = logs.map(log => `
+          <tr style="color: ${log.level === 'error' ? '#dc3545' : log.level === 'warning' ? '#ff9f40' : log.level === 'info' ? '#00D4C8' : '#888'};">
+            <td>${new Date(log.created_at).toLocaleString('fr-FR')}</td>
+            <td>
+              ${log.level === 'error' ? '<span class="badge badge-red">ERROR</span>' : 
+                log.level === 'warning' ? '<span class="badge badge-orange">WARN</span>' : 
+                log.level === 'info' ? '<span class="badge badge-teal">INFO</span>' : 
+                `<span class="badge badge-green">${log.level.toUpperCase()}</span>`}
+            </td>
+            <td>${log.service}</td>
+            <td>${log.message}</td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Erreur chargement logs:', error);
+      }
+    }, 5000);
+    liveBtn.textContent = 'Arrêter';
+    liveBtn.classList.remove('btn-primary');
+    liveBtn.classList.add('btn-danger');
+  }
+});
+</script>
+<%- include('partials/footer') %>
