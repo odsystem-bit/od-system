@@ -728,7 +728,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // ──────────────────────────────────────────────
 //  Routes Administrateur — Authentification separee
 // ──────────────────────────────────────────────
-Route::prefix('admin')->name('admin.')->middleware('admin.ip')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
 
     // Login admin (accessible sans authentification admin)
     Route::middleware('guest:admin')->group(function () {

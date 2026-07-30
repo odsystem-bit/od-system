@@ -12,6 +12,9 @@ export default defineConfig({
                 'resources/js/vendor.js',
                 'resources/js/influencer.js',
                 'resources/css/app.css',
+                'resources/css/admin.css',
+                'resources/css/vendor.css',
+                'resources/css/influencer.css',
             ],
             refresh: true,
         }),
@@ -19,10 +22,12 @@ export default defineConfig({
     server: {
         hmr: false,
     },
+    publicDir: 'public',
     build: {
         watch: false,
-        rollupOptions: {
-            external: (id) => id.startsWith('/images/'),
-        },
+        // Disable externalizing image imports so Vite can properly process static assets.
+        // rollupOptions: {
+        //     external: (id) => id.startsWith('/images/'),
+        // },
     },
 });

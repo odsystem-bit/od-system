@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- PWA -->
+        <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#14b8a6">
         <link rel="apple-touch-icon" href="/apk-logo.png">
         <meta name="mobile-web-app-capable" content="yes">
