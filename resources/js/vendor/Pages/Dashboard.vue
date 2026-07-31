@@ -8,7 +8,7 @@ import axios from 'axios';
  * Props transmises par Vendor\DashboardController@index.
  *
  * - wallet       : Objet Wallet du vendor (balance, pending_balance, escrow_balance).
- * - stats        : { active_campaigns, total_spent, total_clicks, total_affiliate_sales, available_balance, escrow_balance }.
+ * - stats        : { active_campaigns, total_spent, total_clicks, paid_clicks, click_rate, total_partner_sales, available_balance, escrow_balance }.
  * - campaigns    : Collection paginee des campagnes (avec smart_links_count).
  * - transactions : 10 dernières transactions du vendor.
  * - kyc_status   : Statut KYC du vendor (not_submitted | pending | approved | rejected).
@@ -175,7 +175,7 @@ function formatCurrency(amount) {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-    }).format(amount) + ' FCFA';
+    }).format(Number(amount ?? 0)) + ' FCFA';
 }
 
 /**
@@ -375,8 +375,8 @@ function kycBadge() {
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-slate-500">Total clics</p>
-                                <p class="text-2xl font-bold text-slate-900">{{ stats.total_clicks.toLocaleString('fr-FR') }}</p>
-                                <p class="text-xs text-slate-400 mt-0.5">{{ stats.paid_clicks.toLocaleString('fr-FR') }} clics payes</p>
+                                <p class="text-2xl font-bold text-slate-900">{{ (stats.total_clicks ?? 0).toLocaleString('fr-FR') }}</p>
+                                <p class="text-xs text-slate-400 mt-0.5">{{ (stats.paid_clicks ?? 0).toLocaleString('fr-FR') }} clics payes</p>
                             </div>
                         </div>
                     </div>
@@ -407,7 +407,7 @@ function kycBadge() {
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-slate-500">Achats (affiliation)</p>
-                                <p class="text-2xl font-bold text-slate-900">{{ stats.total_affiliate_sales.toLocaleString('fr-FR') }}</p>
+                                <p class="text-2xl font-bold text-slate-900">{{ (stats.total_partner_sales ?? 0).toLocaleString('fr-FR') }}</p>
                                 <p class="text-xs text-slate-400 mt-0.5">Commandes generees</p>
                             </div>
                         </div>
@@ -423,7 +423,7 @@ function kycBadge() {
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-slate-500">Taux conversion</p>
-                                <p class="text-2xl font-bold text-slate-900">{{ stats.total_clicks > 0 ? ((stats.total_affiliate_sales / stats.total_clicks) * 100).toFixed(1) + '%' : '—' }}</p>
+                                <p class="text-2xl font-bold text-slate-900">{{ stats.total_clicks > 0 ? ((stats.total_partner_sales / stats.total_clicks) * 100).toFixed(1) + '%' : '—' }}</p>
                                 <p class="text-xs text-slate-400 mt-0.5">Clics → achats</p>
                             </div>
                         </div>

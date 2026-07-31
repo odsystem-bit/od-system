@@ -1,0 +1,41 @@
+# Identity
+
+## Objectif
+
+Le package Identity est responsable de la gestion de l'identité dans Tracy.
+
+Il gère :
+
+- Utilisateurs
+- Organisations
+- Workspaces
+- Teams
+- Memberships
+- Rôles
+- Permissions
+- Authentification
+- Sessions
+- Invitations
+
+## Hors périmètre
+
+Identity ne gère pas :
+
+- Les paiements
+- Les campagnes
+- Les commandes
+- Les produits
+- Les tickets
+- Les conversations IA
+
+## Dépendances
+
+Identity ne dépend d'aucun autre domaine.
+
+Tous les autres domaines peuvent dépendre d'Identity.
+
+## Principe
+
+Identity est le cœur du système d'identité de Tracy.
+
+Aucun autre package ne doit implémenter sa propre gestion des utilisateurs ou des permissions.

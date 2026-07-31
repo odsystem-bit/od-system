@@ -1,0 +1,158 @@
+# Permission
+
+## Objectif
+
+Permission représente une autorisation permettant d'exécuter une action précise dans un Workspace.
+
+Les Permissions sont regroupées dans des Roles.
+
+Elles ne sont jamais attribuées directement à un User.
+
+---
+
+# Responsabilités
+
+Une Permission peut :
+
+- Autoriser une action
+- Être attribuée à plusieurs Roles
+- Être utilisée pour contrôler l'accès aux fonctionnalités
+
+Une Permission ne peut pas :
+
+- Être attribuée directement à un User
+- Authentifier un utilisateur
+- Gérer un Workspace
+
+---
+
+# Attributs
+
+| Nom | Type | Obligatoire | Description |
+|------|------|-------------|-------------|
+| id | UUID | Oui | Identifiant unique |
+| code | String | Oui | Code unique de la permission |
+| name | String | Oui | Nom lisible |
+| description | String | Non | Description |
+| module | String | Oui | Domaine fonctionnel concerné |
+| createdAt | DateTime | Oui | Date de création |
+| updatedAt | DateTime | Oui | Dernière modification |
+
+---
+
+# Relations
+
+Permission
+
+→ Role (0..*)
+
+---
+
+# Règles métier
+
+- Le code est unique.
+- Une Permission peut appartenir à plusieurs Roles.
+- Une Permission ne peut jamais être attribuée directement à un User.
+- Une Permission représente une seule action.
+
+---
+
+# Exemples
+
+## Identity
+
+- user.create
+- user.update
+- user.delete
+- user.view
+
+---
+
+## Workspace
+
+- workspace.create
+- workspace.update
+- workspace.delete
+- workspace.settings
+
+---
+
+## Team
+
+- team.create
+- team.update
+- team.delete
+- team.assign
+
+---
+
+## Marketing
+
+- campaign.create
+- campaign.update
+- campaign.publish
+- campaign.delete
+
+---
+
+## Commerce
+
+- product.create
+- product.update
+- product.delete
+- order.view
+- order.manage
+
+---
+
+## Payments
+
+- wallet.view
+- payment.deposit
+- payment.withdraw
+- payment.refund
+
+---
+
+## Support
+
+- ticket.create
+- ticket.reply
+- ticket.close
+
+---
+
+## Analytics
+
+- analytics.view
+- analytics.export
+
+---
+
+# Événements
+
+- PermissionCreated
+- PermissionUpdated
+- PermissionDeleted
+
+---
+
+# Cas d'utilisation
+
+- CreatePermission
+- UpdatePermission
+- DeletePermission
+
+---
+
+# Hors périmètre
+
+Permission ne gère pas :
+
+- Les utilisateurs
+- Les rôles
+- Les Workspaces
+- Les paiements
+- Les commandes
+- Les campagnes
+- Les conversations IA

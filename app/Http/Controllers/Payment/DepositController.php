@@ -121,52 +121,67 @@ class DepositController extends Controller
 
         $user = auth()->user();
         $service = app(FeexPayService::class);
-        $transaction = $service->createDepositTransaction($user, (float) $validated['amount_target']);
-        $transaction->update(['payment_gateway' => 'feexpay']);
 
-        $phone   = $validated['phone'] ?? $user->phone ?? $user->whatsapp_number ?? '';
-        $network = FeexPayService::detectNetwork($phone, $user->country ?? 'BJ');
+        try {
+            $transaction = $service->createDepositTransaction($user, (float) $validated['amount_target']);
+            $transaction->update(['payment_gateway' => 'feexpay']);
 
-        if (! $network || ! $phone) {
-            $transaction->update(['status' => 'failed']);
-            $msg = 'Numero de telephone invalide ou reseau non detecte. Veuillez mettre a jour votre profil.';
-            if ($request->wantsJson()) {
-                return response()->json(['message' => $msg], 422);
+            $phone   = $validated['phone'] ?? $user->phone ?? $user->whatsapp_number ?? '';
+            $network = FeexPayService::detectNetwork($phone, $user->country ?? 'BJ');
+
+            if (! $network || ! $phone) {
+                $transaction->update(['status' => 'failed']);
+                $msg = 'Numero de telephone invalide ou reseau non detecte. Veuillez mettre a jour votre profil.';
+                if ($request->wantsJson()) {
+                    return response()->json(['message' => $msg], 422);
+                }
+                return back()->withErrors(['payment' => $msg]);
             }
-            return back()->withErrors(['payment' => $msg]);
-        }
 
-        $result = $service->initiateMobilePayment(
-            (int) ceil((float) $transaction->amount_total),
-            $phone,
-            $network,
-            $user->name ?? 'Client',
-            $user->email ?? ''
-        );
+            $result = $service->initiateMobilePayment(
+                (int) ceil((float) $transaction->amount_total),
+                $phone,
+                $network,
+                $user->name ?? 'Client',
+                $user->email ?? ''
+            );
 
-        if (! $result['success']) {
-            $transaction->update(['status' => 'failed']);
-            $msg = 'Erreur FeexPay: ' . ($result['message'] ?? 'impossible d\'initier le paiement USSD.');
-            if ($request->wantsJson()) {
-                return response()->json(['message' => $msg], 422);
+            if (! $result['success']) {
+                $transaction->update(['status' => 'failed']);
+                $msg = 'Erreur FeexPay: ' . ($result['message'] ?? 'impossible d\'initier le paiement USSD.');
+                if ($request->wantsJson()) {
+                    return response()->json(['message' => $msg], 422);
+                }
+                return back()->withErrors(['payment' => $msg]);
             }
-            return back()->withErrors(['payment' => $msg]);
-        }
 
-        $transaction->update([
-            'gateway_ref' => $result['reference'],
-            'reference'   => 'DEP-FXP-' . $result['reference'],
-        ]);
-
-        if ($request->wantsJson()) {
-            return response()->json([
-                'transaction_id' => $transaction->id,
-                'gateway'        => 'feexpay',
-                // Pas de payment_url : le paiement USSD est envoye sur le telephone
+            $transaction->update([
+                'gateway_ref' => $result['reference'],
+                'reference'   => 'DEP-FXP-' . $result['reference'],
             ]);
-        }
 
-        return redirect()->route('vendor.deposit.callback', ['transaction_id' => $transaction->id]);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'transaction_id' => $transaction->id,
+                    'gateway'        => 'feexpay',
+                ]);
+            }
+
+            return redirect()->route('vendor.deposit.callback', ['transaction_id' => $transaction->id]);
+
+        } catch (\Throwable $e) {
+            Log::error('Deposit initiation exception', [
+                'user_id' => $user->id,
+                'error'   => $e->getMessage(),
+                'file'    => $e->getFile() . ':' . $e->getLine(),
+            ]);
+
+            $msg = 'Une erreur technique est survenue lors de l\'initiation du paiement. Veuillez reessayer.';
+            if ($request->wantsJson()) {
+                return response()->json(['message' => $msg], 422);
+            }
+            return back()->withErrors(['payment' => $msg]);
+        }
     }
 
     // ──────────────────────────────────────────────

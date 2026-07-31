@@ -48,7 +48,7 @@ function formatCurrency(amount) {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-    }).format(amount) + ' FCFA';
+    }).format(Number(amount ?? 0)) + ' FCFA';
 }
 
 function mediaUrl(campaign) {

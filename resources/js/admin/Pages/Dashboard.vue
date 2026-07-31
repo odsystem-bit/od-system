@@ -33,7 +33,7 @@ const props = defineProps({
 });
 
 function formatCurrency(value) {
-    return new Intl.NumberFormat('fr-FR', { style: 'decimal', minimumFractionDigits: 0 }).format(value) + ' FCFA';
+    return new Intl.NumberFormat('fr-FR', { style: 'decimal', minimumFractionDigits: 0 }).format(Number(value ?? 0)) + ' FCFA';
 }
 
 function formatDate(dateString) {

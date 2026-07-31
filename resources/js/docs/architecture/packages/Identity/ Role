@@ -1,0 +1,99 @@
+# Role
+
+## Objectif
+
+Role représente un ensemble de permissions attribuées à une Membership.
+
+Un Role définit ce qu'un membre est autorisé à faire dans un Workspace.
+
+Les permissions ne sont jamais attribuées directement à un User.
+
+---
+
+# Responsabilités
+
+Un Role peut :
+
+- Regrouper des permissions
+- Être attribué à plusieurs Memberships
+- Être personnalisé
+- Être activé ou désactivé
+
+Un Role ne peut pas :
+
+- Authentifier un utilisateur
+- Gérer les utilisateurs
+- Gérer les Workspaces
+
+---
+
+# Attributs
+
+| Nom | Type | Obligatoire | Description |
+|------|------|-------------|-------------|
+| id | UUID | Oui | Identifiant unique |
+| workspaceId | UUID | Oui | Workspace propriétaire |
+| name | String | Oui | Nom du rôle |
+| description | String | Non | Description |
+| isSystem | Boolean | Oui | Rôle système ou personnalisé |
+| createdAt | DateTime | Oui | Date de création |
+| updatedAt | DateTime | Oui | Dernière modification |
+
+---
+
+# Relations
+
+Role
+
+→ Workspace (1)
+
+Role
+
+→ Permission (1..*)
+
+Role
+
+→ Membership (0..*)
+
+---
+
+# Règles métier
+
+- Un Role appartient à un seul Workspace.
+- Le nom doit être unique dans un Workspace.
+- Un Role système ne peut pas être supprimé.
+- Un Role doit posséder au moins une Permission.
+- Un Role peut être attribué à plusieurs Memberships.
+
+---
+
+# Événements
+
+- RoleCreated
+- RoleUpdated
+- RoleDeleted
+- PermissionAssignedToRole
+- PermissionRemovedFromRole
+
+---
+
+# Cas d'utilisation
+
+- CreateRole
+- UpdateRole
+- DeleteRole
+- AssignPermission
+- RemovePermission
+
+---
+
+# Hors périmètre
+
+Role ne gère pas :
+
+- Les utilisateurs
+- Les Workspaces
+- Les paiements
+- Les commandes
+- Les campagnes
+- Les conversations IA

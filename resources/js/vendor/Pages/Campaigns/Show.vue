@@ -5,8 +5,8 @@ import { computed, ref } from 'vue';
 
 const props = defineProps({
     campaign: Object,
-    paidClicks: Number,
-    totalClicks: Number,
+    paidClicks: { type: Number, default: 0 },
+    totalClicks: { type: Number, default: 0 },
     influencerStats: { type: Array, default: () => [] },
     available_balance: { type: Number, default: 0 },
 });
@@ -249,8 +249,8 @@ function totalFollowers(stat) {
                         </div>
                         <p class="text-xs font-medium text-slate-500">Clics payes</p>
                     </div>
-                    <p class="text-lg font-bold text-slate-900">{{ paidClicks.toLocaleString('fr-FR') }}</p>
-                    <p class="text-xs text-slate-400 mt-1">{{ totalClicks.toLocaleString('fr-FR') }} clics totaux</p>
+                    <p class="text-lg font-bold text-slate-900">{{ (paidClicks ?? 0).toLocaleString('fr-FR') }}</p>
+                    <p class="text-xs text-slate-400 mt-1">{{ (totalClicks ?? 0).toLocaleString('fr-FR') }} clics totaux</p>
                 </div>
 
                 <!-- Taux de Conversion (Clics valides) -->
@@ -411,8 +411,8 @@ function totalFollowers(stat) {
                                 </td>
                                 <!-- Clics -->
                                 <td class="whitespace-nowrap px-4 py-4 text-center">
-                                    <p class="text-sm font-bold text-slate-900">{{ stat.paid_clicks.toLocaleString('fr-FR') }}</p>
-                                    <p class="text-[10px] text-slate-400">{{ stat.total_clicks.toLocaleString('fr-FR') }} totaux</p>
+                                    <p class="text-sm font-bold text-slate-900">{{ (stat.paid_clicks ?? 0).toLocaleString('fr-FR') }}</p>
+                                    <p class="text-[10px] text-slate-400">{{ (stat.total_clicks ?? 0).toLocaleString('fr-FR') }} totaux</p>
                                 </td>
                                 <!-- Ventes -->
                                 <td class="whitespace-nowrap px-4 py-4 text-center">

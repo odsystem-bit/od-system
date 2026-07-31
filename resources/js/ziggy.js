@@ -53,23 +53,76 @@ function route(name, params = {}, absolute = true) {
   }
 
   let uri = definition.uri || '';
-  const values = params && typeof params === 'object' && !Array.isArray(params)
-    ? params
-    : { 0: params };
+  const bindings = definition.bindings || {};
 
-  uri = uri.replace(/\{([^}]+)\}/g, (_, key) => {
-    const value = values[key];
-    if (value === undefined || value === null || value === '') {
+  // Noms des segments dynamiques, dans leur ordre d'apparition ({param} et {param?}).
+  const paramNames = (uri.match(/\{[^}]+\}/g) || [])
+    .map((segment) => segment.slice(1, -1).replace(/\?$/, ''));
+
+  const isPlainObject = params !== null && typeof params === 'object' && !Array.isArray(params);
+  const named = isPlainObject ? { ...params } : {};
+  // Valeurs positionnelles : route('x', 5) ou route('x', [5, 'abc']).
+  const positional = Array.isArray(params)
+    ? params.slice()
+    : (isPlainObject || params === undefined || params === null ? [] : [params]);
+
+  // Modele passe directement pour une route a un seul parametre : route('users.show', user).
+  // Ses autres attributs ne doivent pas finir en query string.
+  let modelShortcut = false;
+  if (isPlainObject && paramNames.length === 1 && !(paramNames[0] in named)) {
+    const key = bindings[paramNames[0]] || 'id';
+    if (key in named) {
+      positional.push(named[key]);
+      modelShortcut = true;
+    }
+  }
+
+  function resolveValue(name, value) {
+    if (value !== null && typeof value === 'object') {
+      return value[bindings[name] || 'id'];
+    }
+    return value;
+  }
+
+  const used = new Set();
+  const values = {};
+  let positionalIndex = 0;
+
+  for (const name of paramNames) {
+    let value;
+    if (name in named && named[name] !== undefined && named[name] !== null) {
+      value = named[name];
+      used.add(name);
+    } else if (positionalIndex < positional.length) {
+      value = positional[positionalIndex++];
+    }
+    const resolved = resolveValue(name, value);
+    if (resolved !== undefined && resolved !== null && resolved !== '') {
+      values[name] = resolved;
+    }
+  }
+
+  uri = uri.replace(/\{([^}]+)\}/g, (_, raw) => {
+    const value = values[raw.replace(/\?$/, '')];
+    if (value === undefined) {
       return '';
     }
     return encodeURIComponent(String(value));
   });
 
-  uri = uri.replace(/\/\{[^}]+\}?/g, '');
-  uri = uri.replace(/^\/+/g, '').replace(/\/+$/g, '');
+  // Nettoie les segments vides laisses par des parametres optionnels absents.
+  uri = uri.replace(/\/+/g, '/').replace(/^\/+/g, '').replace(/\/+$/g, '');
+
+  // Les cles restantes deviennent une query string, comme le fait Ziggy.
+  const query = (modelShortcut ? [] : Object.keys(named))
+    .filter((key) => !used.has(key) && named[key] !== undefined && named[key] !== null && named[key] !== '')
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(String(resolveValue(key, named[key])))}`)
+    .join('&');
 
   const base = absolute ? (Ziggy.url || '') : '';
-  return uri ? `${base}/${uri}` : base;
+  const url = uri ? `${base}/${uri}` : base;
+
+  return query ? `${url}?${query}` : url;
 }
 
 route.current = function (pattern) {

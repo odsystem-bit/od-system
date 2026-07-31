@@ -1,0 +1,112 @@
+# Membership
+
+## Objectif
+
+Membership représente l'appartenance d'un User à un Workspace.
+
+C'est Membership qui définit les rôles et les permissions d'un utilisateur dans un Workspace.
+
+Un User n'appartient jamais directement à un Workspace.
+
+---
+
+# Responsabilités
+
+Membership peut :
+
+- Associer un User à un Workspace
+- Attribuer un ou plusieurs rôles
+- Activer ou suspendre l'accès
+- Enregistrer la date d'adhésion
+- Gérer le statut du membre
+
+Membership ne peut pas :
+
+- Authentifier un utilisateur
+- Modifier les informations du User
+- Modifier les informations du Workspace
+
+---
+
+# Attributs
+
+| Nom | Type | Obligatoire | Description |
+|------|------|-------------|-------------|
+| id | UUID | Oui | Identifiant unique |
+| userId | UUID | Oui | Utilisateur |
+| workspaceId | UUID | Oui | Workspace |
+| status | MembershipStatus | Oui | Statut |
+| joinedAt | DateTime | Oui | Date d'adhésion |
+| invitedBy | UUID | Non | Utilisateur ayant envoyé l'invitation |
+| createdAt | DateTime | Oui | Date de création |
+| updatedAt | DateTime | Oui | Dernière modification |
+
+---
+
+# États possibles
+
+- Pending
+- Active
+- Suspended
+- Left
+
+---
+
+# Relations
+
+Membership
+
+→ User (1)
+
+Membership
+
+→ Workspace (1)
+
+Membership
+
+→ Role (1..*)
+
+---
+
+# Règles métier
+
+- Un User ne peut avoir qu'une seule Membership par Workspace.
+- Une Membership suspendue ne permet aucun accès.
+- Une Membership peut posséder plusieurs rôles.
+- Un User peut avoir plusieurs Memberships dans plusieurs Workspaces.
+
+---
+
+# Événements
+
+- MembershipCreated
+- MembershipActivated
+- MembershipSuspended
+- MembershipRemoved
+- RoleAssigned
+- RoleRevoked
+
+---
+
+# Cas d'utilisation
+
+- JoinWorkspace
+- InviteMember
+- ActivateMembership
+- SuspendMembership
+- RemoveMembership
+- AssignRole
+- RevokeRole
+
+---
+
+# Hors périmètre
+
+Membership ne gère pas :
+
+- Les utilisateurs
+- Les Workspaces
+- Les paiements
+- Les commandes
+- Les campagnes
+- Les conversations IA

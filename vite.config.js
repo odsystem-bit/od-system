@@ -4,7 +4,15 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
     plugins: [
-        vue(),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    // Absolute URLs (e.g. src="/images/logo.png") are served from public/
+                    // and must not be turned into module imports by the SFC compiler.
+                    includeAbsolute: false,
+                },
+            },
+        }),
         laravel({
             input: [
                 'resources/js/app.js',
@@ -22,12 +30,7 @@ export default defineConfig({
     server: {
         hmr: false,
     },
-    publicDir: 'public',
     build: {
         watch: false,
-        // Disable externalizing image imports so Vite can properly process static assets.
-        // rollupOptions: {
-        //     external: (id) => id.startsWith('/images/'),
-        // },
     },
 });

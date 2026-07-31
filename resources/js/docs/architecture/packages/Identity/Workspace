@@ -1,0 +1,109 @@
+# Workspace
+
+## Objectif
+
+Workspace représente un espace de travail appartenant à une Organization.
+
+Toutes les activités métier (campagnes, commandes, paiements, utilisateurs, etc.) sont réalisées dans un Workspace.
+
+---
+
+# Responsabilités
+
+Un Workspace peut :
+
+- Accueillir des utilisateurs
+- Organiser des équipes
+- Gérer les rôles
+- Contenir des campagnes
+- Contenir des produits
+- Contenir des commandes
+- Contenir des paiements
+- Définir ses paramètres
+
+Un Workspace ne peut pas :
+
+- Exister sans Organization
+- Appartenir à plusieurs Organizations
+
+---
+
+# Attributs
+
+| Nom | Type | Obligatoire | Description |
+|------|------|-------------|-------------|
+| id | UUID | Oui | Identifiant unique |
+| organizationId | UUID | Oui | Organisation propriétaire |
+| name | String | Oui | Nom du Workspace |
+| slug | String | Oui | Identifiant public |
+| description | String | Non | Description |
+| logo | String | Non | Logo |
+| timezone | Timezone | Oui | Fuseau horaire |
+| currency | Currency | Oui | Devise |
+| status | WorkspaceStatus | Oui | État |
+| createdAt | DateTime | Oui | Date de création |
+| updatedAt | DateTime | Oui | Dernière modification |
+
+---
+
+# États possibles
+
+- Active
+- Suspended
+- Archived
+
+---
+
+# Relations
+
+Workspace
+
+→ Organization (1)
+
+Workspace
+
+→ Membership (1..*)
+
+Workspace
+
+→ Team (1..*)
+
+---
+
+# Règles métier
+
+- Un Workspace appartient à une seule Organization.
+- Le nom est obligatoire.
+- Le slug est unique dans l'Organization.
+- Un Workspace suspendu est inaccessible.
+- Un Workspace archivé est en lecture seule.
+
+---
+
+# Événements
+
+- WorkspaceCreated
+- WorkspaceUpdated
+- WorkspaceSuspended
+- WorkspaceArchived
+
+---
+
+# Cas d'utilisation
+
+- CreateWorkspace
+- UpdateWorkspace
+- SuspendWorkspace
+- ArchiveWorkspace
+
+---
+
+# Hors périmètre
+
+Workspace ne gère pas :
+
+- L'authentification
+- Les paiements
+- Les campagnes
+- Les commandes
+- Les conversations IA

@@ -1,0 +1,95 @@
+# Team
+
+## Objectif
+
+Team représente un groupe de Memberships au sein d'un Workspace.
+
+Les Teams permettent d'organiser les membres par fonction sans modifier leurs rôles.
+
+---
+
+# Responsabilités
+
+Une Team peut :
+
+- Regrouper des membres
+- Définir un responsable d'équipe
+- Organiser le travail
+- Être utilisée pour filtrer les accès métier
+
+Une Team ne peut pas :
+
+- Authentifier un utilisateur
+- Attribuer des permissions
+- Gérer les rôles
+
+---
+
+# Attributs
+
+| Nom | Type | Obligatoire | Description |
+|------|------|-------------|-------------|
+| id | UUID | Oui | Identifiant unique |
+| workspaceId | UUID | Oui | Workspace propriétaire |
+| name | String | Oui | Nom de l'équipe |
+| description | String | Non | Description |
+| leaderId | UUID | Non | Responsable de l'équipe |
+| createdAt | DateTime | Oui | Date de création |
+| updatedAt | DateTime | Oui | Dernière modification |
+
+---
+
+# Relations
+
+Team
+
+→ Workspace (1)
+
+Team
+
+→ Membership (0..*)
+
+---
+
+# Règles métier
+
+- Une Team appartient à un seul Workspace.
+- Le nom doit être unique dans un Workspace.
+- Un membre peut appartenir à plusieurs Teams.
+- Une Team peut être vide.
+
+---
+
+# Événements
+
+- TeamCreated
+- TeamUpdated
+- TeamDeleted
+- MemberAddedToTeam
+- MemberRemovedFromTeam
+- TeamLeaderAssigned
+
+---
+
+# Cas d'utilisation
+
+- CreateTeam
+- UpdateTeam
+- DeleteTeam
+- AddMemberToTeam
+- RemoveMemberFromTeam
+- AssignTeamLeader
+
+---
+
+# Hors périmètre
+
+Team ne gère pas :
+
+- Les utilisateurs
+- Les rôles
+- Les permissions
+- Les paiements
+- Les campagnes
+- Les commandes
+- Les conversations IA

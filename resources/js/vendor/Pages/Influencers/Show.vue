@@ -10,6 +10,7 @@ const props = defineProps({
 const inf = computed(() => props.influencer);
 
 function formatFollowers(n) {
+    n = Number(n ?? 0);
     if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0', '') + 'M';
     if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'k';
     return n.toLocaleString('fr-FR');

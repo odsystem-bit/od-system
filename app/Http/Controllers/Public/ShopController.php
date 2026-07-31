@@ -48,7 +48,7 @@ class ShopController extends Controller
         $products = Product::where('vendor_id', $vendor->id)
             ->with('images:id,product_id,path,sort_order')
             ->latest()
-            ->paginate(24);
+            ->get();
 
         return Inertia::render('Shop/Show', [
             'vendor'   => $vendor,
